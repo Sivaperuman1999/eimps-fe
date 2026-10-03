@@ -392,9 +392,9 @@ function Layout() {
         </DrawerHeader>
         
         <Box sx={{ px: 2, pt: 2, pb: 1 }}>
-          <Typography variant="overline" sx={{ color: '#94A3B8', opacity: open ? 1 : 0, display: open ? 'block' : 'none' }}>
+          {/* <Typography variant="overline" sx={{ color: '#94A3B8', opacity: open ? 1 : 0, display: open ? 'block' : 'none' }}>
             Menu
-          </Typography>
+          </Typography> */}
         </Box>
 
         <List sx={{ px: 2 }}>

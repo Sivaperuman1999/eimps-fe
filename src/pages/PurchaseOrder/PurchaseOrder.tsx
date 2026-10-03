@@ -15,8 +15,11 @@ import { getApiErrorMessage } from "../../utils/apiError";
 import Toast from "../../compnents/Toast";
 
 import Loader from "../../compnents/Loader";
+import { useAuthStore } from "../../store/authStore";
 
 function PurchaseOrder() {
+  const user = useAuthStore((state) => state.user);
+  const role = user?.role || "USER";
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderType[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -102,8 +105,8 @@ function PurchaseOrder() {
     if (!window.confirm(`Are you sure you want to approve PO ${purchaseOrder.poNumber}?`)) return;
     setIsLoading(true);
     try {
-      const response = await purchaseOrderService.approvePurchaseOrder(String(purchaseOrder.id));
-      setToast({ open: true, message: response?.message || "PO Approved", severity: "success" });
+      await purchaseOrderService.approvePurchaseOrder(String(purchaseOrder.id));
+      setToast({ open: true, message: "Purchase Order Approved", severity: "success" });
       await getPurchaseOrders();
     } catch (error: unknown) {
       setToast({ open: true, message: getApiErrorMessage(error, "Failed to approve PO"), severity: "error" });
@@ -121,8 +124,8 @@ function PurchaseOrder() {
     }
     setIsLoading(true);
     try {
-      const response = await purchaseOrderService.rejectPurchaseOrder(String(purchaseOrder.id), reason);
-      setToast({ open: true, message: response?.message || "PO Rejected", severity: "success" });
+      await purchaseOrderService.rejectPurchaseOrder(String(purchaseOrder.id), reason);
+      setToast({ open: true, message: "Purchase Order Rejected", severity: "success" });
       await getPurchaseOrders();
     } catch (error: unknown) {
       setToast({ open: true, message: getApiErrorMessage(error, "Failed to reject PO"), severity: "error" });
@@ -135,8 +138,8 @@ function PurchaseOrder() {
     if (!window.confirm(`Are you sure you want to submit PO ${purchaseOrder.poNumber} for approval?`)) return;
     setIsLoading(true);
     try {
-      const response = await purchaseOrderService.submitPurchaseOrder(String(purchaseOrder.id));
-      setToast({ open: true, message: response?.message || "PO Submitted successfully", severity: "success" });
+      await purchaseOrderService.submitPurchaseOrder(String(purchaseOrder.id));
+      setToast({ open: true, message: "Purchase Order Submitted successfully", severity: "success" });
       await getPurchaseOrders();
     } catch (error: unknown) {
       setToast({ open: true, message: getApiErrorMessage(error, "Failed to submit PO"), severity: "error" });
@@ -212,7 +215,6 @@ function PurchaseOrder() {
       >
         <PurchaseOrderColumn
           purchaseOrders={purchaseOrders}
-
           onEdit={handleEdit}
           onDelete={handleDelete}
           onApprove={handleApprove}

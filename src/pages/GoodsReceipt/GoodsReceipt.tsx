@@ -16,8 +16,11 @@ import Toast from "../../compnents/Toast";
 
 import Loader from "../../compnents/Loader";
 import vendorService from "../../services/vendorService";
+import { useAuthStore } from "../../store/authStore";
 
 function GoodsReceipt() {
+  const user = useAuthStore((state) => state.user);
+  const role = user?.role || "USER";
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceiptType[]>([]);
   const [vendors, setVendors] = useState<{ id: number; name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -116,27 +119,6 @@ function GoodsReceipt() {
     }
   };
 
-  const handleSubmitGRN = async (goodsReceipt: GoodsReceiptType) => {
-    console.log("Submitting GRN:", goodsReceipt);
-    if (!window.confirm(`Are you sure you want to submit GRN ${goodsReceipt.grnNumber} for approval?`)) {
-      console.log("User cancelled submission");
-      return;
-    }
-    console.log("Starting API call...");
-    setIsLoading(true);
-    try {
-      const response = await goodsReceiptService.submitGoodsReceipt(String(goodsReceipt.id));
-      console.log("API response:", response);
-      setToast({ open: true, message: "Goods Receipt Submitted successfully", severity: "success" });
-      await getGoodsReceipts();
-    } catch (error: unknown) {
-      console.error("API Error:", error);
-      setToast({ open: true, message: getApiErrorMessage(error, "Failed to submit GRN"), severity: "error" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleApprove = async (goodsReceipt: GoodsReceiptType) => {
     if (!window.confirm(`Are you sure you want to approve GRN ${goodsReceipt.grnNumber}? Once RECEIVED, stock will be updated.`)) return;
     setIsLoading(true);
@@ -152,14 +134,33 @@ function GoodsReceipt() {
   };
 
   const handleReject = async (goodsReceipt: GoodsReceiptType) => {
-    if (!window.confirm(`Are you sure you want to reject GRN ${goodsReceipt.grnNumber}?`)) return;
+    const reason = window.prompt(`Enter rejection reason for GRN ${goodsReceipt.grnNumber}:`);
+    if (reason === null) return;
+    if (!reason.trim()) {
+      setToast({ open: true, message: "Rejection reason is required", severity: "error" });
+      return;
+    }
     setIsLoading(true);
     try {
-      await goodsReceiptService.rejectGoodsReceipt(String(goodsReceipt.id));
+      await goodsReceiptService.rejectGoodsReceipt(String(goodsReceipt.id), reason);
       setToast({ open: true, message: "Goods Receipt Rejected", severity: "success" });
       await getGoodsReceipts();
     } catch (error: unknown) {
       setToast({ open: true, message: getApiErrorMessage(error, "Failed to reject GRN"), severity: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmitGRN = async (goodsReceipt: GoodsReceiptType) => {
+    if (!window.confirm(`Are you sure you want to submit GRN ${goodsReceipt.grnNumber} for approval?`)) return;
+    setIsLoading(true);
+    try {
+      await goodsReceiptService.submitGoodsReceipt(String(goodsReceipt.id));
+      setToast({ open: true, message: "Goods Receipt Submitted successfully", severity: "success" });
+      await getGoodsReceipts();
+    } catch (error: unknown) {
+      setToast({ open: true, message: getApiErrorMessage(error, "Failed to submit GRN"), severity: "error" });
     } finally {
       setIsLoading(false);
     }
@@ -241,9 +242,9 @@ function GoodsReceipt() {
           vendors={vendors}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onSubmit={handleSubmitGRN}
           onApprove={handleApprove}
           onReject={handleReject}
+          onSubmit={handleSubmitGRN}
         />
       </Paper>
 

@@ -97,13 +97,15 @@ function PurchaseOrderColumn({
             label={status}
             size="small"
             color={
-              status === "APPROVED"
+              status === "APPROVED" || status === "COMPLETED" || status === "FULLY_RECEIVED"
                 ? "success"
-                : status === "REJECTED"
-                  ? "error"
-                  : status === "CANCELLED"
+                : status === "PARTIALLY_RECEIVED"
+                  ? "warning"
+                  : status === "REJECTED" || status === "CANCELLED"
                     ? "error"
-                    : "default"
+                    : status === "SUBMITTED" || status === "PENDING_REVIEW"
+                      ? "info"
+                      : "default"
             }
           />
         );
@@ -121,7 +123,7 @@ function PurchaseOrderColumn({
       renderCell: (params: GridRenderCellParams) => {
         const purchaseOrder = params.row as PurchaseOrder;
         const status = purchaseOrder.status;
-        const canApproveReject = (role === "ADMIN" || role === "MANAGER") && (status === "SUBMITTED" || status === "PENDING_REVIEW");
+        const canApproveReject = status === "SUBMITTED" || status === "PENDING_REVIEW";
         const canSubmit = status === "DRAFT";
 
         return (

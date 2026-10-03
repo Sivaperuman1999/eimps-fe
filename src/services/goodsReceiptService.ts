@@ -48,8 +48,8 @@ const goodsReceiptService = {
     return response.data;
   },
 
-  rejectGoodsReceipt: async (id: string) => {
-    const response = await api.patch(`/goods-receipt/${id}/reject`);
+  rejectGoodsReceipt: async (id: string, rejectionReason: string) => {
+    const response = await api.patch(`/goods-receipt/${id}/reject`, { rejectionReason });
     return response.data;
   },
 };

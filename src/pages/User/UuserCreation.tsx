@@ -129,7 +129,8 @@ function UserCreation({
         console.log("response", response);
 
         if (response.success) {
-          setRoles(response.data?.data);
+          const rolesArray = Array.isArray(response.data) ? response.data : response.data?.data;
+          setRoles(rolesArray || []);
         }
       } catch (error) {
         console.error("Failed to fetch roles", error);
@@ -214,9 +215,9 @@ function UserCreation({
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
               >
-                {roles.map((role) => (
-                  <MenuItem key={role.id} value={role.code}>
-                    {role.name}
+                {roles.map((role: any) => (
+                  <MenuItem key={role.id || role._id} value={role.roleCode || role.code}>
+                    {role.roleName || role.name}
                   </MenuItem>
                 ))}
               </TextField>

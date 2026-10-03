@@ -98,6 +98,53 @@ function PurchaseOrder() {
     }
   };
 
+  const handleApprove = async (purchaseOrder: PurchaseOrderType) => {
+    if (!window.confirm(`Are you sure you want to approve PO ${purchaseOrder.poNumber}?`)) return;
+    setIsLoading(true);
+    try {
+      const response = await purchaseOrderService.approvePurchaseOrder(String(purchaseOrder.id));
+      setToast({ open: true, message: response?.message || "PO Approved", severity: "success" });
+      await getPurchaseOrders();
+    } catch (error: unknown) {
+      setToast({ open: true, message: getApiErrorMessage(error, "Failed to approve PO"), severity: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReject = async (purchaseOrder: PurchaseOrderType) => {
+    const reason = window.prompt(`Enter rejection reason for PO ${purchaseOrder.poNumber}:`);
+    if (reason === null) return;
+    if (!reason.trim()) {
+      setToast({ open: true, message: "Rejection reason is required", severity: "error" });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await purchaseOrderService.rejectPurchaseOrder(String(purchaseOrder.id), reason);
+      setToast({ open: true, message: response?.message || "PO Rejected", severity: "success" });
+      await getPurchaseOrders();
+    } catch (error: unknown) {
+      setToast({ open: true, message: getApiErrorMessage(error, "Failed to reject PO"), severity: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmitPO = async (purchaseOrder: PurchaseOrderType) => {
+    if (!window.confirm(`Are you sure you want to submit PO ${purchaseOrder.poNumber} for approval?`)) return;
+    setIsLoading(true);
+    try {
+      const response = await purchaseOrderService.submitPurchaseOrder(String(purchaseOrder.id));
+      setToast({ open: true, message: response?.message || "PO Submitted successfully", severity: "success" });
+      await getPurchaseOrders();
+    } catch (error: unknown) {
+      setToast({ open: true, message: getApiErrorMessage(error, "Failed to submit PO"), severity: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleClose = () => {
     setOpenCreate(false);
 
@@ -167,8 +214,10 @@ function PurchaseOrder() {
           purchaseOrders={purchaseOrders}
 
           onEdit={handleEdit}
-
           onDelete={handleDelete}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onSubmit={handleSubmitPO}
         />
       </Paper>
 

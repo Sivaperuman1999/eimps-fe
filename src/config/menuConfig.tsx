@@ -7,7 +7,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import CategoryIcon from "@mui/icons-material/Category";
 
-export type UserRole = "ADMIN" | "USER";
+export type UserRole = "ADMIN" | "MANAGER" | "USER";
 
 export interface MenuItem {
   label: string;
@@ -21,7 +21,7 @@ export const menuItems: MenuItem[] = [
     label: "Dashboard",
     path: "/dashboard",
     icon: DashboardIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 
   {
@@ -35,34 +35,34 @@ export const menuItems: MenuItem[] = [
     label: "Inventory",
     path: "/inventory",
     icon: InventoryIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 
   {
     label: "Vendors",
     path: "/vendors",
     icon: BusinessIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 
   {
     label: "Purchase Orders",
     path: "/purchase-orders",
     icon: ShoppingCartIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 
   {
     label: "Goods Receipts",
     path: "/goods-receipts",
     icon: ReceiptIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 
   {
     label: "Category",
     path: "/category",
     icon: CategoryIcon,
-    roles: ["ADMIN", "USER"],
+    roles: ["ADMIN", "MANAGER", "USER"],
   },
 ];

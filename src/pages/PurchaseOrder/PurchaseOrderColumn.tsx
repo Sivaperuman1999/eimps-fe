@@ -8,6 +8,10 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import SendIcon from "@mui/icons-material/Send";
+import { useAuthStore } from "../../store/authStore";
 
 import type { PurchaseOrder } from "../../types/purchaseOrderTypes";
 
@@ -15,15 +19,22 @@ interface PurchaseOrderColumnProps {
   purchaseOrders: PurchaseOrder[];
 
   onEdit?: (purchaseOrder: PurchaseOrder) => void;
-
   onDelete?: (purchaseOrder: PurchaseOrder) => void;
+  onApprove?: (purchaseOrder: PurchaseOrder) => void;
+  onReject?: (purchaseOrder: PurchaseOrder) => void;
+  onSubmit?: (purchaseOrder: PurchaseOrder) => void;
 }
 
 function PurchaseOrderColumn({
   purchaseOrders,
   onEdit,
   onDelete,
+  onApprove,
+  onReject,
+  onSubmit,
 }: PurchaseOrderColumnProps) {
+  const user = useAuthStore((state) => state.user);
+  const role = user?.role || "USER";
   const columns: GridColDef[] = [
     {
       field: "poNumber",
@@ -109,9 +120,33 @@ function PurchaseOrderColumn({
 
       renderCell: (params: GridRenderCellParams) => {
         const purchaseOrder = params.row as PurchaseOrder;
+        const status = purchaseOrder.status;
+        const canApproveReject = (role === "ADMIN" || role === "MANAGER") && (status === "SUBMITTED" || status === "PENDING_REVIEW");
+        const canSubmit = status === "DRAFT";
 
         return (
           <>
+            {canSubmit && (
+              <Tooltip title="Submit for Approval">
+                <IconButton size="small" color="primary" onClick={() => onSubmit?.(purchaseOrder)}>
+                  <SendIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            {canApproveReject && (
+              <>
+                <Tooltip title="Approve">
+                  <IconButton size="small" color="success" onClick={() => onApprove?.(purchaseOrder)}>
+                    <CheckCircleIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Reject">
+                  <IconButton size="small" color="error" onClick={() => onReject?.(purchaseOrder)}>
+                    <CancelIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
             <Tooltip title="Edit">
               <IconButton size="small" onClick={() => onEdit?.(purchaseOrder)}>
                 <EditIcon />

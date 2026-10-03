@@ -35,7 +35,21 @@ const goodsReceiptService = {
 
   deleteGoodsReceipt: async (id: string) => {
     const response = await api.delete(`/goods-receipt/${id}`);
+    return response.data;
+  },
 
+  submitGoodsReceipt: async (id: string) => {
+    const response = await api.patch(`/goods-receipt/${id}/submit`);
+    return response.data;
+  },
+
+  approveGoodsReceipt: async (id: string) => {
+    const response = await api.patch(`/goods-receipt/${id}/approve`);
+    return response.data;
+  },
+
+  rejectGoodsReceipt: async (id: string) => {
+    const response = await api.patch(`/goods-receipt/${id}/reject`);
     return response.data;
   },
 };

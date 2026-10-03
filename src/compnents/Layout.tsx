@@ -32,8 +32,11 @@ import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { useColorMode } from "../theme/ThemeContext";
 import { menuItems, type UserRole } from "../config/menuConfig";
 import { searchGlobal, type SearchResults } from "../services/searchService";
 import userService from "../services/userService";
@@ -161,6 +164,7 @@ function Layout() {
   const location = useLocation();
   const storeUser = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const { mode, toggleColorMode } = useColorMode();
   
   const [open, setOpen] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -318,6 +322,10 @@ function Layout() {
 
           <Box sx={{ flexGrow: 1 }} />
           
+          <IconButton color="inherit" onClick={toggleColorMode} sx={{ mr: 1, color: "#6B7280" }}>
+            {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+
           <IconButton color="inherit" sx={{ mr: 2, color: "#6B7280" }}>
             <NotificationsNoneIcon />
           </IconButton>

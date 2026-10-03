@@ -8,6 +8,10 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import SendIcon from "@mui/icons-material/Send";
+import { useAuthStore } from "../../store/authStore";
 
 import type {
   GoodsReceipt,
@@ -27,6 +31,9 @@ interface GoodsReceiptColumnProps {
   onEdit?: (goodsReceipt: GoodsReceipt) => void;
 
   onDelete?: (goodsReceipt: GoodsReceipt) => void;
+  onSubmit?: (goodsReceipt: GoodsReceipt) => void;
+  onApprove?: (goodsReceipt: GoodsReceipt) => void;
+  onReject?: (goodsReceipt: GoodsReceipt) => void;
 }
 
 function GoodsReceiptColumn({
@@ -34,7 +41,12 @@ function GoodsReceiptColumn({
   vendors,
   onEdit,
   onDelete,
+  onSubmit,
+  onApprove,
+  onReject,
 }: GoodsReceiptColumnProps) {
+  const user = useAuthStore((state) => state.user);
+  const role = user?.role || "USER";
   const columns: GridColDef[] = [
     {
       field: "grnNumber",
@@ -122,7 +134,7 @@ function GoodsReceiptColumn({
           color={
             params.value === "RECEIVED"
               ? "success"
-              : params.value === "CANCELLED"
+              : params.value === "REJECTED" || params.value === "CANCELLED"
                 ? "error"
                 : "default"
           }
@@ -137,9 +149,40 @@ function GoodsReceiptColumn({
       sortable: false,
       filterable: false,
 
-      renderCell: (params: GridRenderCellParams) => (
-        <>
-          <Tooltip title="Edit">
+      renderCell: (params: GridRenderCellParams) => {
+        const goodsReceipt = params.row as GoodsReceipt;
+        const status = goodsReceipt.status;
+        const canApproveReject = (role === "ADMIN" || role === "MANAGER") && (status === "SUBMITTED" || status === "PENDING_REVIEW");
+        const canSubmit = status === "DRAFT";
+
+        return (
+          <>
+            {canSubmit && (
+              <Tooltip title="Submit for Approval">
+                <IconButton
+                  size="small"
+                  color="primary"
+                  onClick={() => onSubmit?.(goodsReceipt)}
+                >
+                  <SendIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            {canApproveReject && (
+              <>
+                <Tooltip title="Approve">
+                  <IconButton size="small" color="success" onClick={() => onApprove?.(goodsReceipt)}>
+                    <CheckCircleIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Reject">
+                  <IconButton size="small" color="error" onClick={() => onReject?.(goodsReceipt)}>
+                    <CancelIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
+            <Tooltip title="Edit">
             <IconButton
               size="small"
               onClick={() => onEdit?.(params.row as GoodsReceipt)}
@@ -158,7 +201,8 @@ function GoodsReceiptColumn({
             </IconButton>
           </Tooltip>
         </>
-      ),
+        );
+      },
     },
   ];
 

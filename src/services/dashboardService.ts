@@ -18,7 +18,9 @@ export interface DashboardData {
     total: number;
     draft: number;
     submitted: number;
+    pendingReview: number;
     approved: number;
+    processing: number;
     completed: number;
     cancelled: number;
     totalValue: number;

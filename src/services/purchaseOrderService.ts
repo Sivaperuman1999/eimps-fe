@@ -32,7 +32,21 @@ const purchaseOrderService = {
 
   deletePurchaseOrder: async (id: string) => {
     const response = await api.delete(`/purchase-orders/${id}`);
+    return response.data;
+  },
 
+  approvePurchaseOrder: async (id: string, comments?: string) => {
+    const response = await api.patch(`/purchase-orders/${id}/approve`, { comments });
+    return response.data;
+  },
+
+  rejectPurchaseOrder: async (id: string, rejectionReason: string, comments?: string) => {
+    const response = await api.patch(`/purchase-orders/${id}/reject`, { rejectionReason, comments });
+    return response.data;
+  },
+
+  submitPurchaseOrder: async (id: string) => {
+    const response = await api.patch(`/purchase-orders/${id}/submit`);
     return response.data;
   },
 };

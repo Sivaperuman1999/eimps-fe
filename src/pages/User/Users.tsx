@@ -32,8 +32,8 @@ function Users() {
 
     try {
       const response = await userService.getUsers();
-
-      setUsers(response.data.users);
+      const usersData = Array.isArray(response.data) ? response.data : response.data?.users;
+      setUsers(usersData || []);
     } catch (error: unknown) {
       const message = getApiErrorMessage(error, "Unable to load users");
 

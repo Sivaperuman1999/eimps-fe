@@ -167,7 +167,6 @@ function GoodsReceiptColumn({
       rows={goodsReceipts}
       columns={columns}
       getRowId={(row) => row.id}
-      autoHeight
       pageSizeOptions={[5, 10, 25]}
       initialState={{
         pagination: {
@@ -180,6 +179,7 @@ function GoodsReceiptColumn({
       disableRowSelectionOnClick
       sx={{
         border: 0,
+        height: '100%',
 
         "& .MuiDataGrid-columnHeaders": {
           fontWeight: 600,

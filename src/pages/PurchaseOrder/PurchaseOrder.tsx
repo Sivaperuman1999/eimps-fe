@@ -156,6 +156,11 @@ function PurchaseOrder() {
       <Paper
         sx={{
           p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: 1,
+          height: 'calc(100vh - 200px)',
+          overflow: 'hidden'
         }}
       >
         <PurchaseOrderColumn

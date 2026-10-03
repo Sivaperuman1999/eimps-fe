@@ -128,7 +128,6 @@ function InventoryColumn({
       rows={inventory}
       columns={columns}
       getRowId={(row) => row.id}
-      autoHeight
       pageSizeOptions={[5, 10, 25]}
       initialState={{
         pagination: {
@@ -141,6 +140,7 @@ function InventoryColumn({
       disableRowSelectionOnClick
       sx={{
         border: 0,
+        height: '100%',
 
         "& .MuiDataGrid-columnHeaders": {
           fontWeight: 600,

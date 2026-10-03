@@ -115,10 +115,10 @@ function CategoryColumn({
       }}
 
       disableRowSelectionOnClick
-      autoHeight
 
       sx={{
         border: 0,
+        height: '100%',
 
         "& .MuiDataGrid-columnHeaders": {
           fontWeight: 600,

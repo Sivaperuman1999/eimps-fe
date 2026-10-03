@@ -120,7 +120,7 @@ function UserColumn({
   ];
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {error && (
         <Box
           sx={{
@@ -141,7 +141,6 @@ function UserColumn({
         rows={users}
         columns={columns}
         getRowId={(row) => row.id}
-        autoHeight
         pageSizeOptions={[5, 10, 25]}
         initialState={{
           pagination: {
@@ -154,6 +153,7 @@ function UserColumn({
         disableRowSelectionOnClick
         sx={{
           border: 0,
+          height: '100%',
 
           "& .MuiDataGrid-columnHeaders": {
             fontWeight: 600,

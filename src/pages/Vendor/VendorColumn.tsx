@@ -109,8 +109,6 @@ function VendorColumn({
 
       getRowId={(row) => row.id}
 
-      autoHeight
-
       pageSizeOptions={[5, 10, 25]}
 
       initialState={{
@@ -126,6 +124,7 @@ function VendorColumn({
 
       sx={{
         border: 0,
+        height: '100%',
 
         "& .MuiDataGrid-columnHeaders": {
           fontWeight: 600,

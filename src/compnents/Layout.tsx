@@ -18,7 +18,10 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  InputBase
+  InputBase,
+  Popper,
+  Paper,
+  CircularProgress
 } from "@mui/material";
 import type { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -26,9 +29,15 @@ import SearchIcon from "@mui/icons-material/Search";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { menuItems, type UserRole } from "../config/menuConfig";
+import { searchGlobal, type SearchResults } from "../services/searchService";
+import userService from "../services/userService";
+import type { User } from "../types/userTypes";
 
 const drawerWidth = 260;
 
@@ -150,13 +159,48 @@ function Layout() {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useAuthStore((state) => state.user);
+  const storeUser = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const [open, setOpen] = React.useState(true);
   
+  const [open, setOpen] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  
+  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
+  
+  // Search state
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState<SearchResults | null>(null);
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [searchAnchorEl, setSearchAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const userRole: UserRole | undefined = user?.role
+  React.useEffect(() => {
+    if (storeUser) {
+      userService.getMe().then((res) => {
+        if (res.success && res.data) {
+          setCurrentUser(res.data);
+        }
+      }).catch(console.error);
+    }
+  }, [storeUser]);
+
+  React.useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults(null);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const delayDebounceFn = setTimeout(() => {
+      searchGlobal(searchQuery).then(res => {
+        setSearchResults(res);
+      }).catch(console.error).finally(() => setIsSearching(false));
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const userRole: UserRole | undefined = storeUser?.role
     ?.toString()
     .trim()
     .toUpperCase() as UserRole | undefined;
@@ -165,21 +209,10 @@ function Layout() {
     ? menuItems.filter((item) => item.roles.includes(userRole))
     : [];
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
     handleClose();
@@ -191,8 +224,10 @@ function Layout() {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
+  const displayUser = currentUser || storeUser;
+
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", overflow: 'hidden' }}>
       <CssBaseline />
 
       <AppBar position="fixed" open={open} elevation={0}>
@@ -212,10 +247,74 @@ function Layout() {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search anything..."
+              placeholder="Search inventory, vendors, POs..."
               inputProps={{ 'aria-label': 'search' }}
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setSearchAnchorEl(e.currentTarget);
+              }}
+              onFocus={(e) => setSearchAnchorEl(e.currentTarget)}
             />
           </Search>
+
+          <Popper
+            open={Boolean(searchQuery.trim() && searchAnchorEl)}
+            anchorEl={searchAnchorEl}
+            placement="bottom-start"
+            style={{ zIndex: 1300, width: searchAnchorEl?.clientWidth }}
+          >
+            <Paper elevation={3} sx={{ mt: 1, maxHeight: 400, overflow: 'auto', p: 1 }}>
+              {isSearching ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                  <CircularProgress size={24} />
+                </Box>
+              ) : searchResults ? (
+                <List>
+                  {searchResults.inventory.length > 0 && (
+                    <>
+                      <Typography variant="overline" sx={{ px: 2, color: 'text.secondary', fontWeight: 'bold' }}>Inventory</Typography>
+                      {searchResults.inventory.map(item => (
+                        <ListItemButton key={`inv-${item.id}`} onClick={() => { setSearchQuery(""); navigate("/inventory"); }}>
+                          <ListItemIcon><InventoryIcon fontSize="small" /></ListItemIcon>
+                          <ListItemText primary={item.name} secondary={`SKU: ${item.sku}`} />
+                        </ListItemButton>
+                      ))}
+                    </>
+                  )}
+                  {searchResults.vendors.length > 0 && (
+                    <>
+                      {searchResults.inventory.length > 0 && <Divider sx={{ my: 1 }} />}
+                      <Typography variant="overline" sx={{ px: 2, color: 'text.secondary', fontWeight: 'bold' }}>Vendors</Typography>
+                      {searchResults.vendors.map(v => (
+                        <ListItemButton key={`ven-${v.id}`} onClick={() => { setSearchQuery(""); navigate("/vendors"); }}>
+                          <ListItemIcon><StorefrontIcon fontSize="small" /></ListItemIcon>
+                          <ListItemText primary={v.name} secondary={`ID: ${v.id}`} />
+                        </ListItemButton>
+                      ))}
+                    </>
+                  )}
+                  {searchResults.purchaseOrders.length > 0 && (
+                    <>
+                      {(searchResults.inventory.length > 0 || searchResults.vendors.length > 0) && <Divider sx={{ my: 1 }} />}
+                      <Typography variant="overline" sx={{ px: 2, color: 'text.secondary', fontWeight: 'bold' }}>Purchase Orders</Typography>
+                      {searchResults.purchaseOrders.map(po => (
+                        <ListItemButton key={`po-${po.id}`} onClick={() => { setSearchQuery(""); navigate("/purchase-orders"); }}>
+                          <ListItemIcon><ReceiptIcon fontSize="small" /></ListItemIcon>
+                          <ListItemText primary={po.poNumber} secondary={`Status: ${po.status}`} />
+                        </ListItemButton>
+                      ))}
+                    </>
+                  )}
+                  {searchResults.inventory.length === 0 && searchResults.vendors.length === 0 && searchResults.purchaseOrders.length === 0 && (
+                    <Typography variant="body2" sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
+                      No results found
+                    </Typography>
+                  )}
+                </List>
+              ) : null}
+            </Paper>
+          </Popper>
 
           <Box sx={{ flexGrow: 1 }} />
           
@@ -223,14 +322,14 @@ function Layout() {
             <NotificationsNoneIcon />
           </IconButton>
 
-          {user && (
+          {displayUser && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", mr: 1.5 }}>
                 <Typography variant="body2" sx={{ fontWeight: 600, color: "#1F2937", lineHeight: 1 }}>
-                  {user.name}
+                  {displayUser.name}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "#6B7280" }}>
-                  {user.role}
+                  {/* {displayUser.role} */}
                 </Typography>
               </Box>
               <IconButton
@@ -239,7 +338,7 @@ function Layout() {
                 color="inherit"
               >
                 <Avatar sx={{ width: 36, height: 36, bgcolor: theme.palette.primary.main }}>
-                  {user.name.charAt(0).toUpperCase()}
+                  {displayUser.name.charAt(0).toUpperCase()}
                 </Avatar>
               </IconButton>
               <Menu
@@ -257,8 +356,16 @@ function Layout() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Settings</MenuItem>
+                <Box sx={{ px: 2, py: 1.5 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{displayUser.name}</Typography>
+                  <Typography variant="body2" color="text.secondary">{displayUser.email}</Typography>
+                  <Typography variant="caption" sx={{ display: 'inline-block', mt: 0.5, px: 1, py: 0.25, bgcolor: 'primary.light', color: 'primary.contrastText', borderRadius: 1 }}>
+                    {displayUser.role}
+                  </Typography>
+                </Box>
+                <Divider />
+                {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
+                {/* <MenuItem onClick={handleClose}>Settings</MenuItem> */}
                 <Divider />
                 <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
                   <ListItemIcon sx={{ color: 'inherit' }}>
@@ -344,6 +451,9 @@ function Layout() {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
         <DrawerHeader />

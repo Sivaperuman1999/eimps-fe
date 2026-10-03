@@ -141,8 +141,6 @@ function PurchaseOrderColumn({
 
       getRowId={(row) => row.id}
 
-      autoHeight
-
       pageSizeOptions={[5, 10, 25]}
 
       initialState={{
@@ -158,6 +156,7 @@ function PurchaseOrderColumn({
 
       sx={{
         border: 0,
+        height: '100%',
 
         "& .MuiDataGrid-columnHeaders": {
           fontWeight: 600,

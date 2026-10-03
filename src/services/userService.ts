@@ -33,6 +33,11 @@ const userService = {
     return response.data;
   },
 
+  getMe: async (): Promise<UserResponse> => {
+    const response = await api.get<UserResponse>("/users/me");
+    return response.data;
+  },
+
   createUser: async (data: CreateUserRequest) => {
     const response = await api.post<UserResponse>("/users", data);
 

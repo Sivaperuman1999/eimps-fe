@@ -11,7 +11,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from "@mui/icons-material/Send";
-import { useAuthStore } from "../../store/authStore";
 
 import type { PurchaseOrder } from "../../types/purchaseOrderTypes";
 
@@ -33,8 +32,6 @@ function PurchaseOrderColumn({
   onReject,
   onSubmit,
 }: PurchaseOrderColumnProps) {
-  const user = useAuthStore((state) => state.user);
-  const role = user?.role || "USER";
   const columns: GridColDef[] = [
     {
       field: "poNumber",

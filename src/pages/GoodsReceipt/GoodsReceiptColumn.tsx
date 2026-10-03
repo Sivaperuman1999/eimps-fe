@@ -11,7 +11,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from "@mui/icons-material/Send";
-import { useAuthStore } from "../../store/authStore";
 
 import type {
   GoodsReceipt,
@@ -44,8 +43,6 @@ function GoodsReceiptColumn({
   onReject,
   onSubmit,
 }: GoodsReceiptColumnProps) {
-  const user = useAuthStore((state) => state.user);
-  const role = user?.role || "USER";
   const columns: GridColDef[] = [
     {
       field: "grnNumber",

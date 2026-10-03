@@ -16,11 +16,8 @@ import Toast from "../../compnents/Toast";
 
 import Loader from "../../compnents/Loader";
 import vendorService from "../../services/vendorService";
-import { useAuthStore } from "../../store/authStore";
 
 function GoodsReceipt() {
-  const user = useAuthStore((state) => state.user);
-  const role = user?.role || "USER";
   const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceiptType[]>([]);
   const [vendors, setVendors] = useState<{ id: number; name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);

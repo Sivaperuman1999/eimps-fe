@@ -15,13 +15,9 @@ import { getApiErrorMessage } from "../../utils/apiError";
 import Toast from "../../compnents/Toast";
 
 import Loader from "../../compnents/Loader";
-import { useAuthStore } from "../../store/authStore";
 
 function PurchaseOrder() {
-  const user = useAuthStore((state) => state.user);
-  const role = user?.role || "USER";
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderType[]>([]);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const [openCreate, setOpenCreate] = useState(false);

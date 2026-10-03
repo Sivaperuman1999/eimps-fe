@@ -42,7 +42,9 @@ function ForgotPassword() {
     setIsLoading(true);
 
     try {
-      const response = await authService.forgotPassword(data);
+      const response = await authService.forgotPassword({
+        email: data.email as string,
+      });
 
       setToast({
         open: true,

@@ -7,7 +7,7 @@ import VendorCreation from "./VendorCreation";
 
 import vendorService from "../../services/vendorService";
 
-import type { Vendor } from "../../types/vendorTypes";
+import type { Vendor as VendorType } from "../../types/vendorTypes";
 
 import { getApiErrorMessage } from "../../utils/apiError";
 
@@ -15,13 +15,13 @@ import Toast from "../../compnents/Toast";
 import Loader from "../../compnents/Loader";
 
 function Vendor() {
-  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [vendors, setVendors] = useState<VendorType[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [openCreate, setOpenCreate] = useState(false);
 
-  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<VendorType | null>(null);
 
   const [toast, setToast] = useState({
     open: false,
@@ -59,13 +59,13 @@ function Vendor() {
     setOpenCreate(true);
   };
 
-  const handleEdit = (vendor: Vendor) => {
+  const handleEdit = (vendor: VendorType) => {
     setSelectedVendor(vendor);
 
     setOpenCreate(true);
   };
 
-  const handleDelete = async (vendor: Vendor) => {
+  const handleDelete = async (vendor: VendorType) => {
     setIsLoading(true);
 
     try {
@@ -93,7 +93,7 @@ function Vendor() {
     }
   };
 
-  const handleStatusChange = async (vendor: Vendor, isActive: boolean) => {
+  const handleStatusChange = async (vendor: VendorType, isActive: boolean) => {
     setIsLoading(true);
 
     try {

@@ -30,7 +30,6 @@ import {
     yupResolver,
 } from '@hookform/resolvers/yup';
 
-import axios from 'axios';
 
 import api from '../../api/axios';
 
@@ -142,6 +141,7 @@ function PurchaseOrderCreation({
         control,
         handleSubmit,
         reset,
+        setValue,
     } = useForm<PurchaseOrderFormData>({
 
         resolver:
@@ -458,13 +458,10 @@ function PurchaseOrderCreation({
             undefined
         ) {
 
-            /*
-             * We don't have setValue
-             * currently.
-             *
-             * So price can be entered
-             * manually.
-             */
+            setValue(
+                `items.${index}.unitPrice`,
+                Number(selectedItem.unitPrice),
+            );
 
         }
 

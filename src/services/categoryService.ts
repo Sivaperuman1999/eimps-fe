@@ -1,7 +1,6 @@
 import api from "../api/axios";
 
 import type {
-  Category,
   CreateCategoryRequest,
   UpdateCategoryRequest,
 } from "../types/categoryTypes";

@@ -13,7 +13,6 @@ import { Controller, useForm } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import axios from "axios";
 
 import vendorService from "../../services/vendorService";
 

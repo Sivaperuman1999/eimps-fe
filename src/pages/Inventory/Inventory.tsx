@@ -3,16 +3,16 @@ import { Button, Grid, Paper, Typography } from "@mui/material";
 import InventoryColumn from "./InventoryColumn";
 import InventoryCreation from "./InventoryCreation";
 import inventoryService from "../../services/inventoryService";
-import type { Inventory } from "../../types/inventoryTypes";
+import type { Inventory as InventoryType } from "../../types/inventoryTypes";
 import { getApiErrorMessage } from "../../utils/apiError";
 import Toast from "../../compnents/Toast";
 import Loader from "../../compnents/Loader";
 
 function Inventory() {
-  const [inventory, setInventory] = useState<Inventory[]>([]);
+  const [inventory, setInventory] = useState<InventoryType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState<Inventory | null>(
+  const [selectedInventory, setSelectedInventory] = useState<InventoryType | null>(
     null,
   );
 
@@ -51,12 +51,12 @@ function Inventory() {
     setOpenCreate(true);
   };
 
-  const handleEdit = (item: Inventory) => {
+  const handleEdit = (item: InventoryType) => {
     setSelectedInventory(item);
     setOpenCreate(true);
   };
 
-  const handleDelete = async (item: Inventory) => {
+  const handleDelete = async (item: InventoryType) => {
     setIsLoading(true);
 
     try {
@@ -84,7 +84,7 @@ function Inventory() {
     }
   };
 
-  const handleStatusChange = async (item: Inventory, isActive: boolean) => {
+  const handleStatusChange = async (item: InventoryType, isActive: boolean) => {
     setIsLoading(true);
 
     try {

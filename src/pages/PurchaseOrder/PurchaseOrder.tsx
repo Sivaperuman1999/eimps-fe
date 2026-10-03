@@ -8,7 +8,7 @@ import PurchaseOrderCreation from "./PurchaseOrderCreation";
 
 import purchaseOrderService from "../../services/purchaseOrderService";
 
-import type { PurchaseOrder } from "../../types/purchaseOrderTypes";
+import type { PurchaseOrder as PurchaseOrderType } from "../../types/purchaseOrderTypes";
 
 import { getApiErrorMessage } from "../../utils/apiError";
 
@@ -17,14 +17,14 @@ import Toast from "../../compnents/Toast";
 import Loader from "../../compnents/Loader";
 
 function PurchaseOrder() {
-  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderType[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [openCreate, setOpenCreate] = useState(false);
 
   const [selectedPurchaseOrder, setSelectedPurchaseOrder] =
-    useState<PurchaseOrder | null>(null);
+    useState<PurchaseOrderType | null>(null);
 
   const [toast, setToast] = useState({
     open: false,
@@ -62,13 +62,13 @@ function PurchaseOrder() {
     setOpenCreate(true);
   };
 
-  const handleEdit = (purchaseOrder: PurchaseOrder) => {
+  const handleEdit = (purchaseOrder: PurchaseOrderType) => {
     setSelectedPurchaseOrder(purchaseOrder);
 
     setOpenCreate(true);
   };
 
-  const handleDelete = async (purchaseOrder: PurchaseOrder) => {
+  const handleDelete = async (purchaseOrder: PurchaseOrderType) => {
     setIsLoading(true);
 
     try {

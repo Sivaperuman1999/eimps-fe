@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
 import UserColumn from "./UserColumn";
 import UserCreation from "./UuserCreation";
@@ -151,30 +151,23 @@ function Users() {
 
   return (
     <>
-      <Grid container>
-        <Grid size={10}>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 500,
-            }}
-          >
-            User Management
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1F2937", mb: 0.5 }}>
+            Users
           </Typography>
-        </Grid>
-
-        <Grid
-          size={2}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
+          <Typography variant="body1" sx={{ color: "#6B7280" }}>
+            Manage system users and access
+          </Typography>
+        </Box>
+        <Button 
+          variant="contained" 
+          onClick={handleCreate}
+          sx={{ borderRadius: 2, px: 3 }}
         >
-          <Button variant="contained" onClick={handleCreate}>
-            + Add User
-          </Button>
-        </Grid>
-      </Grid>
+          + Add User
+        </Button>
+      </Box>
 
       <Paper
         sx={{

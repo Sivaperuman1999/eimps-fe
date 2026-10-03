@@ -1,0 +1,222 @@
+import { useEffect, useState } from "react";
+
+import { Button, Grid, Paper, Typography } from "@mui/material";
+
+import GoodsReceiptColumn from "./GoodsReceiptColumn";
+
+import GoodsReceiptCreation from "./GoodsReceiptCreation";
+
+import goodsReceiptService from "../../services/goodsReceiptService";
+
+import type { GoodsReceipt as GoodsReceiptType } from "../../types/goodsReceiptTypes";
+
+import { getApiErrorMessage } from "../../utils/apiError";
+
+import Toast from "../../compnents/Toast";
+
+import Loader from "../../compnents/Loader";
+import vendorService from "../../services/vendorService";
+
+function GoodsReceipt() {
+  const [goodsReceipts, setGoodsReceipts] = useState<GoodsReceiptType[]>([]);
+  const [vendors, setVendors] = useState<{ id: number; name: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [openCreate, setOpenCreate] = useState(false);
+
+  const [selectedGoodsReceipt, setSelectedGoodsReceipt] =
+    useState<GoodsReceiptType | null>(null);
+
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
+
+  const getVendors = async () => {
+    try {
+      const response = await vendorService.getVendors();
+
+      setVendors(response.data || []);
+    } catch (error: unknown) {
+      setToast({
+        open: true,
+        message: getApiErrorMessage(error, "Unable to load vendors"),
+        severity: "error",
+      });
+    }
+  };
+
+  useEffect(() => {
+    getGoodsReceipts();
+    getVendors();
+  }, []);
+  const getGoodsReceipts = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await goodsReceiptService.getGoodsReceipts();
+      setGoodsReceipts(response.data.data || []);
+    } catch (error: unknown) {
+      setToast({
+        open: true,
+
+        message: getApiErrorMessage(error, "Unable to load goods receipts"),
+
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getGoodsReceipts();
+  }, []);
+
+  const handleCreate = () => {
+    setSelectedGoodsReceipt(null);
+
+    setOpenCreate(true);
+  };
+
+  const handleEdit = (goodsReceipt: GoodsReceiptType) => {
+    setSelectedGoodsReceipt(goodsReceipt);
+
+    setOpenCreate(true);
+  };
+
+  const handleDelete = async (goodsReceipt: GoodsReceiptType) => {
+    setIsLoading(true);
+
+    try {
+      const response = await goodsReceiptService.deleteGoodsReceipt(
+        String(goodsReceipt.id),
+      );
+
+      setToast({
+        open: true,
+
+        message: response?.message || "Goods receipt deleted successfully",
+
+        severity: "success",
+      });
+
+      await getGoodsReceipts();
+    } catch (error: unknown) {
+      setToast({
+        open: true,
+
+        message: getApiErrorMessage(error, "Unable to delete goods receipt"),
+
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setOpenCreate(false);
+
+    setSelectedGoodsReceipt(null);
+  };
+
+  const handleSaved = async (message: string) => {
+    setOpenCreate(false);
+
+    setSelectedGoodsReceipt(null);
+
+    setToast({
+      open: true,
+      message,
+      severity: "success",
+    });
+
+    await getGoodsReceipts();
+  };
+
+  const handleError = (message: string) => {
+    setToast({
+      open: true,
+      message,
+      severity: "error",
+    });
+  };
+
+  return (
+    <>
+      <Grid
+        container
+        sx={{
+          mb: 2,
+          alignItems: "center",
+        }}
+      >
+        <Grid size={10}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 500,
+            }}
+          >
+            Goods Receipt Management
+          </Typography>
+        </Grid>
+
+        <Grid
+          size={2}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button variant="contained" onClick={handleCreate}>
+            + Add Goods Receipt
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Paper
+        sx={{
+          p: 2,
+        }}
+      >
+        <GoodsReceiptColumn
+          goodsReceipts={goodsReceipts}
+          vendors={vendors}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </Paper>
+
+      <GoodsReceiptCreation
+        open={openCreate}
+
+        onClose={handleClose}
+
+        goodsReceipt={selectedGoodsReceipt}
+
+        onSaved={handleSaved}
+
+        onError={handleError}
+      />
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        severity={toast.severity}
+        onClose={() =>
+          setToast((prev) => ({
+            ...prev,
+            open: false,
+          }))
+        }
+      />
+
+      <Loader open={isLoading} />
+    </>
+  );
+}
+
+export default GoodsReceipt;

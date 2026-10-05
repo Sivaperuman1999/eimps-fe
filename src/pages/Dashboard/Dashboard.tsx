@@ -7,6 +7,22 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
+const CardMetric = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
+  <Paper sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2, height: '100%' }}>
+    <Box>
+      <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>
+        {title}
+      </Typography>
+      <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
+        {value}
+      </Typography>
+    </Box>
+    <Box sx={{ backgroundColor: `${color}15`, p: 1.5, borderRadius: 2, color: color, display: 'flex' }}>
+      {icon}
+    </Box>
+  </Paper>
+);
+
 function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,22 +41,6 @@ function Dashboard() {
     };
     fetchData();
   }, []);
-
-  const CardMetric = ({ title, value, icon, color }: { title: string, value: string | number, icon: React.ReactNode, color: string }) => (
-    <Paper sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2, height: '100%' }}>
-      <Box>
-        <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600, mb: 1, textTransform: 'uppercase' }}>
-          {title}
-        </Typography>
-        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary' }}>
-          {value}
-        </Typography>
-      </Box>
-      <Box sx={{ backgroundColor: `${color}15`, p: 1.5, borderRadius: 2, color: color, display: 'flex' }}>
-        {icon}
-      </Box>
-    </Paper>
-  );
 
   const inventoryChartData = data ? [
     { name: 'Active', value: data.inventory.active, color: '#10B981' },

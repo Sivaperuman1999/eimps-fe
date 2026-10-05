@@ -47,10 +47,6 @@ function GoodsReceipt() {
     }
   };
 
-  useEffect(() => {
-    getGoodsReceipts();
-    getVendors();
-  }, []);
   const getGoodsReceipts = async () => {
     setIsLoading(true);
 
@@ -72,6 +68,7 @@ function GoodsReceipt() {
 
   useEffect(() => {
     getGoodsReceipts();
+    getVendors();
   }, []);
 
   const handleCreate = () => {

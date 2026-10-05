@@ -1,9 +1,12 @@
 import api from "../api/axios";
 
 export interface Role {
-  id: string;
-  code: string;
-  name: string;
+  id?: string;
+  _id?: string;
+  code?: string;
+  roleCode?: string;
+  name?: string;
+  roleName?: string;
 }
 
 export interface CategoryMetadata {
@@ -24,6 +27,12 @@ export interface MetadataResponse {
   };
 }
 
+export interface RolesResponse {
+  success: boolean;
+  message?: string;
+  data: Role[] | { data: Role[] };
+}
+
 const metadataService = {
   getMetadata: async (): Promise<MetadataResponse> => {
     const response = await api.get<MetadataResponse>(
@@ -31,8 +40,8 @@ const metadataService = {
     );
     return response.data;
   },
-  getRoles: async (): Promise<any> => {
-    const response = await api.get("/metadata/roles");
+  getRoles: async (): Promise<RolesResponse> => {
+    const response = await api.get<RolesResponse>("/metadata/roles");
     return response.data;
   }
 };

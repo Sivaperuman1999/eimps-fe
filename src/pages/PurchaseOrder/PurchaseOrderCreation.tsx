@@ -358,6 +358,7 @@ function PurchaseOrderCreation({
         getVendors();
         getItems();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
 

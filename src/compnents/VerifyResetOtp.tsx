@@ -65,7 +65,7 @@ function VerifyResetOtp() {
           otp: data.otp,
         },
       });
-    } catch (error) {
+    } catch {
       setToast({
         open: true,
         message: "Invalid or expired OTP",

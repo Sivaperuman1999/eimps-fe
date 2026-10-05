@@ -58,7 +58,12 @@ function ForgotPassword() {
           email: data.email,
         },
       });
-    } catch (error) {
+    } catch {
+      setToast({
+        open: true,
+        message: "Unable to send reset link",
+        severity: "error",
+      });
     } finally {
       setIsLoading(false);
     }

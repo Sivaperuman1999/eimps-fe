@@ -63,7 +63,7 @@ function VendorColumn({
             color="success"
 
             onChange={() =>
-              onStatusChange?.(params.row as Vendor, !Boolean(params.value))
+              onStatusChange?.(params.row as Vendor, !params.value)
             }
           />
         </Tooltip>

@@ -110,7 +110,7 @@ function UserCreation({
       );
 
       onClose();
-    } catch (error: unknown) {
+    } catch {
       const message = user ? "Unable to update user" : "Unable to create user";
       onError(message);
     } finally {
@@ -215,7 +215,7 @@ function UserCreation({
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
               >
-                {roles.map((role: any) => (
+                {roles.map((role) => (
                   <MenuItem key={role.id || role._id} value={role.roleCode || role.code}>
                     {role.roleName || role.name}
                   </MenuItem>

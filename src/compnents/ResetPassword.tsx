@@ -65,7 +65,7 @@ function ResetPassword() {
       setTimeout(() => {
         navigate("/login");
       }, 1000);
-    } catch (error) {
+    } catch {
       setToast({
         open: true,
         message: "Unable to reset password",

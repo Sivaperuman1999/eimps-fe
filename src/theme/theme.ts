@@ -115,6 +115,6 @@ export const getThemeOptions = (mode: PaletteMode): ThemeOptions => ({
           },
         },
       },
-    } as any,
+    },
   },
 });

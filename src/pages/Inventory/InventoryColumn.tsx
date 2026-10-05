@@ -45,9 +45,9 @@ function InventoryColumn({
       field: "category",
       headerName: "Category",
       width: 120,
-      valueGetter: (params: { row?: any }, row?: any) => {
+      valueGetter: (params: { row?: Inventory }, row?: Inventory) => {
         const actualRow = row || params?.row;
-        return actualRow?.category?.name || actualRow?.categoryId || "-";
+        return actualRow?.categoryId || "-";
       }
     },
 

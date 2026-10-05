@@ -13,6 +13,7 @@ const ThemeContext = createContext<ThemeContextType>({
   mode: 'light',
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useColorMode = () => useContext(ThemeContext);
 
 export const CustomThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
